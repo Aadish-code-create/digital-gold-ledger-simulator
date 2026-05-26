@@ -21,27 +21,52 @@ It focuses on understanding how transaction events, batching, and ledger allocat
 
 ## System Architecture
 
-User Transaction
-      │
-      ▼
-Event Logger (PENDING_BATCH)
-      │
-      ├──────────────▶ Rewards Engine (Async)
-      │
-      ▼
-Transaction DB
-      │
-      ▼
-Midnight Batch Processor
-      │
-      ▼
-Aggregated Pool
-      │
-      ▼
-Provider API (SafeGold/Vault)
-      │
-      ▼
-Callback Confirmation
-      │
-      ▼
-Ledger Allocation Engine
+
+```text
+                     ┌──────────────────────────┐
+                     │   User Transaction       │
+                     └────────────┬─────────────┘
+                                  │
+                                  ▼
+                     ┌──────────────────────────┐
+                     │ Event Logger             │
+                     │ (PENDING_BATCH)          │
+                     └────────────┬─────────────┘
+                                  │
+                 ┌────────────────┴───────────────┐
+                 │                                │
+                 ▼                                ▼
+     ┌────────────────────┐          ┌────────────────────┐
+     │ Rewards Engine     │          │   Transaction DB   │
+     │     (Async)        │          │   Persist Events   │
+     └────────────────────┘          └─────────┬──────────┘
+                                                │
+                                                ▼
+                                   ┌──────────────────────┐
+                                   │ Midnight Batch       │
+                                   │ Processor            │
+                                   └─────────┬────────────┘
+                                             │
+                                             ▼
+                                   ┌──────────────────────┐
+                                   │ Aggregated Pool      │
+                                   └─────────┬────────────┘
+                                             │
+                                             ▼
+                                   ┌──────────────────────┐
+                                   │ Provider API         │
+                                   │ (SafeGold / Vault)   │
+                                   └─────────┬────────────┘
+                                             │
+                                             ▼
+                                   ┌──────────────────────┐
+                                   │ Callback             │
+                                   │ Confirmation         │
+                                   └─────────┬────────────┘
+                                             │
+                                             ▼
+                                   ┌──────────────────────┐
+                                   │ Ledger Allocation    │
+                                   │ Engine               │
+                                   └──────────────────────┘
+```
